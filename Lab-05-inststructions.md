@@ -15,17 +15,19 @@ First, clone the "Lab O5" branch of Calavera thus (DON'T FORGET TO CHANGE XX TO 
 
 What does this do? Git repositories can be branched; a branch is a separate line of development. The Cala-dev branch gives you a single machine Vagrantfile to modify, making things a little easier for you.
 
-Review [this link](http://stackoverflow.com/questions/1778088/how-to-clone-a-single-branch-in-git) for further explanation
+Review [branching basics](https://www.atlassian.com/git/tutorials/using-branches/) for an overview and [command alternatives](http://stackoverflow.com/questions/1778088/how-to-clone-a-single-branch-in-git) for explanation of the particular command.
 
-cd into Cala-dev
+cd into the new manosXX directory that was created as a result of the command you just ran
 
-and change the machine # and related settings from 40 to the 2-digit number you have been assigned in class.
+    cd manosXX
 
-
+and in the Vagrantfile change the machine # and related settings from 40 to the 2-digit number you have been assigned in class.
 
 You can do this in nano easily:
 
 ````
+nano Vagrantfile
+  ## file is shown
 Ctrl \
 Enter your search term [press return]
 Enter your replacement term [press return]
@@ -33,8 +35,7 @@ A [to replace all instances]
 ````
 Vagrant up!
 
-    XXXXXX/manos41$ vagrant up
-    Bringing machine 'manos41' up with 'virtualbox' provider...
+    vagrant up
 
 ssh into your development VM:
 
@@ -42,10 +43,10 @@ ssh into your development VM:
 
 Set your git variables:
 
-    vagrant@manos40:~/hijo$ git config --global user.name "Manos XX"
+    vagrant@manosXX:~/hijo$ git config --global user.name "Manos XX"
     vagrant@manos40:~/hijo$ git config --global user.email manosXX@calavera.biz
 
-Type:
+Now, unlike your previous manos (Lab 04) this one is empty. There is not yet a Java application in it. Type:
 
     vagrant@manos40:~$ git clone ssh://cerebro/home/hijo.git
 
@@ -134,11 +135,86 @@ Up til now, this should all seem familiar as it is similar to Lab 04. However, y
 
 You are going to make a change, test it out locally, commit it to git locally, and then push it to the central repository (cerebro). When you do this, it will trigger a remote build and test, and you will see on the Jenkins dashboard whether it succeeded or failed
 
-
-
-
-
 The key principle is that you must pull very frequently, especially if you are about to change something.
+
+You need to perform the next two steps in immediate order. First, update your repository:
+
+    git pull
+
+This makes sure that there aren't any changes on cerebro we don't know about.
+
+Now let's make a small change:
+
+    nano src/main/java/biz/calavera/MainServlet.java
+
+````
+   package biz.calavera;
+
+   //package test;
+
+   import java.io.*;
+   import javax.servlet.*;
+   import javax.servlet.http.*;
+
+   public class MainServlet extends HttpServlet {
+   	// Import required java libraries
+
+   	  private String message;
+      private String manos41msg;  ## Lab 05 update
+
+   	  public void init() throws ServletException
+   	  {
+   	      // Edit this message, save the file, and rebuild with Ant
+                 // to see it reflected on the Web page at http://localhost:8081/MainServlet
+   	      message = "This is a skeleton application-- to explore the end to end Calavera delivery framework.";
+                 manos41msg = "ManosXX was here";   ## Lab 05 update
+   	  }
+
+   	  public void doGet(HttpServletRequest request,
+   	                    HttpServletResponse response)
+   	            throws ServletException, IOException
+   	  {
+   	      // Set response content type
+   	      response.setContentType("text/html");
+
+   	      // Actual logic goes here.
+   	      PrintWriter out = response.getWriter();
+                 Class1 oResp = new Class1(message);
+   	      out.println(oResp.webMessage());
+
+                 Class1 oM41Resp = new Class1(manos41msg);     ## Lab 05 update
+                 out.println(oM41Resp.webMessage());       ## Lab 05 update
+   	  }
+
+   	  public void destroy()
+   	  {
+   	      // do nothing.
+   	  }
+   	}
+````
+
+There are FOUR places you need to make a small update. They are identified by the comment "## Lab 05 Update."  You can make up whatever you want for your manosXXmsg string as long as it is less than 30 characters.
+
+Ok, make the update. Now build and test it:
+
+    sudo ant
+    [message as before, unless it fails]
+
+If your build fails, go back and review and fix. Try again until it works.
+
+When your build finally works, you should be able to curl with results like:
+
+<h1>This is a skeleton application-- to explore the end to end Calavera delivery framework.</h1>
+<h1>ManosXX was here</h1>
+
+
+
+
+
+
+
+
+===================================================
 
 http://192.168.33.33:8080/ jenkins
 
@@ -161,9 +237,6 @@ then deploy to production.
 
 what about breaking and backing out? reverting?
 
-will need XWindows working for Jenkins and Artifactory and the final application result.
-
-
 
 
 =======================
@@ -174,7 +247,7 @@ lab 6: Nagios monitoring
 
 Lab 7: Jira & collab
 
-Lab 8: Project mgmt
+Lab 8: Project/release mgmt
 
 Lab 9: ITSM
 
