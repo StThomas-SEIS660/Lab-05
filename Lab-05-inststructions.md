@@ -8,6 +8,11 @@ In this lab, you will configure and instantiate your own VM that serves as a dis
 
 **In the following material substitute the 2-digit number you receive from the instructor, for XX**
 
+## X-windows setup
+This is an interactive session where we will establish whether it is feasible to support X-windows for everyone. There is too much variation in your clients to publish directions.
+
+## Clone the lab and vagrant up
+
 First, clone the "Lab O5" branch of Calavera thus (DON'T FORGET TO CHANGE XX TO YOUR 2 DIGIT #!):
 
     cd
@@ -36,6 +41,8 @@ A [to replace all instances]
 Vagrant up!
 
     vagrant up
+
+## Go into your VM,  clone and build hijo
 
 ssh into your development VM:
 
@@ -131,13 +138,15 @@ Check that your development Tomcat server is serving your page:
     vagrant@manos40:~/hijo$ curl localhost:8080/MainServlet
     <h1>This is a skeleton application-- to explore the end to end Calavera delivery framework.</h1>
 
+## Make a change, build, test, and checkin
+
 Up til now, this should all seem familiar as it is similar to Lab 04. However, you are now in a fully distributed development environment with many others working on the same code base.
 
 You are going to make a change, test it out locally, commit it to git locally, and then push it to the central repository (cerebro). When you do this, it will trigger a remote build and test, and you will see on the Jenkins dashboard whether it succeeded or failed
 
-The key principle is that you must pull very frequently, especially if you are about to change something.
+The key principle is that you must pull very frequently, especially if you are about to change something becausee you need to be up to date with what others have put in the repository.
 
-You need to perform the next two steps in immediate order. First, update your repository:
+You need to perform the next steps in immediate order, so be sure you have some time to work uninterrupted. First, update your repository:
 
     git pull
 
@@ -195,7 +204,7 @@ Now let's make a small change:
 
 There are FOUR places you need to make a small update. They are identified by the comment "## Lab 05 Update."  You can make up whatever you want for your manosXXmsg string as long as it is less than 30 characters.
 
-Ok, make the update. Now build and test it:
+Ok, make the updates. Now build and test:
 
     sudo ant
     [message as before, unless it fails]
@@ -204,39 +213,67 @@ If your build fails, go back and review and fix. Try again until it works.
 
 When your build finally works, you should be able to curl with results like:
 
-<h1>This is a skeleton application-- to explore the end to end Calavera delivery framework.</h1>
-<h1>ManosXX was here</h1>
+    <h1>This is a skeleton application-- to explore the end to end Calavera delivery framework.</h1>
+    <h1>ManosXX was here</h1>
+
+Time is of the essence. Check it in to your local repo:
+
+    git commit -a -m "ManosXX checkin"
+
+and push it to the master:
+
+   git push origin master
+
+(In a real world development, you might have committed it locally many times, but this is compressed.)
+
+Now, when you push it to the master, one of two things will happen.
+
+**If you are lucky**
+
+... you will get this:
+
+````
+vagrant@manos41:~/hijo$ git push origin master
+Counting objects: 15, done.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (8/8), 789 bytes | 0 bytes/s, done.
+Total 8 (delta 1), reused 0 (delta 0)
+remote:   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+remote:                                  Dload  Upload   Total   Spent    Left  Speed
+remote: 100   100  100   100    0     0   6406      0 --:--:-- --:--:-- --:--:--  6666
+remote: Scheduled polling of hijoInit
+remote: No Git consumers using SCM API plugin for: git@cerebro:/home/hijo.git
+To ssh://cerebro/home/hijo.git
+   897638e..5fcfb04  master -> master
+````
+
+If all goes well, Jenkins has now kicked off. If you are doing the lab in class, you can see builds kicking off on the Jenkins dashboard.
+
+![](jenkins1.png)
+
+If you have X-windows running, you can open a window on the main seis660 server and type:
+
+    firefox -X -no-remote
+
+and enter the URL http://127.0.0.1:8133
+
+If you do not have either of these options, you can query the Jenkins API and at least see if a build has just run. Type
+
+    java -jar /mnt/public/jenkins-cli.jar -s http://127.0.0.1:8133/ console hijoInit
 
 
 
 
+**If you are unlucky**
+...you will get something like the following:
 
-
+We will discuss this in class.
 
 
 ===================================================
 
-http://192.168.33.33:8080/ jenkins
 
-
-
-
-they need to examine the chain step by step and run small experiments
-
-we need a lab that has the students collaborating on making small contributions to the application in a distributed way.
-
-they each need to add a small piece of functionality with a small test case
-  - each should add their own Class and TestClass
-  - and one main class should call each method
-
-
-
-they need to check out, make changes, refresh & sync & test locally, then push and run the build.
-
-then deploy to production.
-
-what about breaking and backing out? reverting?
-
+then deploy to production (post to discussion board).
 
 
 =======================
